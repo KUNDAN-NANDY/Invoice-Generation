@@ -31,4 +31,41 @@ public class InvoiceController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/records")
+    public ResponseEntity<?> getAllInvoices() {
+        try {
+            return ResponseEntity.ok(invoiceService.getAllInvoices());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch invoices");
+        }
+    }
+
+    @GetMapping("/records/{id}")
+    public ResponseEntity<?> getInvoiceById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(invoiceService.getInvoiceById(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invoice not found with ID: " + id);
+        }
+    }
+
+    @GetMapping(value = "/pdf/{id}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> downloadInvoicePdf(@PathVariable Long id) {
+        try {
+            byte[] pdfData = invoiceService.getInvoicePdfById(id);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Invoice_" + id + ".pdf")
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(pdfData);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 }

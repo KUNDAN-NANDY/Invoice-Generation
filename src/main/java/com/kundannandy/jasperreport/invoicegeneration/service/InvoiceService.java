@@ -56,4 +56,22 @@ public class InvoiceService {
 
         return pdfData;
     }
+
+    public List<InvoiceRecord> getAllInvoices() {
+        return invoiceRecordRepository.findAll();
+    }
+
+    public InvoiceRecord getInvoiceById(Long id) {
+        return invoiceRecordRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found with ID: " + id));
+    }
+
+    public byte[] getInvoicePdfById(Long id) {
+        InvoiceRecord record = invoiceRecordRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Invoice not found with ID: " + id));
+
+        return record.getPdfData();
+    }
+
+
 }
